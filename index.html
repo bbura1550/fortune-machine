@@ -1206,15 +1206,15 @@
   /* ============================================================
      TIMING SETTINGS - change the cadence here.
      All values are milliseconds. This is the one place to adjust
-     how fast the reading types, how long each scene waits, and
-     how slowly the reels stop.
+     how fast the reading types and how slowly the reels stop.
+     NOTE: scenes never change on their own. The story only moves
+     forward when someone presses CONSULT, NEXT, or ASK AGAIN.
      ============================================================ */
   const TIMING = {
     /* SCENE 2 - THE CRYSTAL BALL */
     analysisTotal: 4000,       // total time the analysis lines take to type out
     analysisLinePause: 95,     // small pause after each line finishes typing
     analysisCharMin: 8,        // fastest per-character typing speed
-    scene2AutoAdvance: 1500,   // pause after the hopeful line, then move to the reels
 
     /* SCENE 3 - THE REELS */
     beforeReels: 900,          // short beat after Scene 3 appears before spinning
@@ -1233,7 +1233,6 @@
     champWakePause: 2300,      // how long the blackout "wake up" line stays up
     champResetPause: 650,      // pause after the dream reels reset
     reelTick: 92,              // spacing of the reel ticking sound
-    scene3AutoAdvance: 3000,   // pause after everything lands, then show the prophecy
 
     /* STARTUP BEAT */
     startDelay: 420             // beat before the spirits begin typing
@@ -1693,7 +1692,6 @@
     speechTimer: null,
     scene: "ask",
     skipAnalysis: false,
-    advanceTimer: null,
     advanceResolve: null,
     advanceToken: 0
   };
@@ -1786,30 +1784,28 @@
     els.nextReels.classList.toggle("is-waiting", !ready);
   }
 
-  /* Used for both auto-advance timers and manual NEXT presses. */
-  function waitScene(ms, token) {
+  /* The story only moves on when a button is pressed. This parks the
+     current scene until NEXT is clicked, then hands control back to the
+     prediction flow. cancelAdvance() releases it if the run is reset. */
+  function waitForNext(token) {
     return new Promise(function (resolve) {
       const myToken = ++stateRefs.advanceToken;
-      const finish = function () {
+      stateRefs.advanceResolve = function (advance) {
         if (myToken !== stateRefs.advanceToken) return;
-        if (stateRefs.advanceTimer) clearTimeout(stateRefs.advanceTimer);
-        stateRefs.advanceTimer = null;
+        stateRefs.advanceToken += 1;
         stateRefs.advanceResolve = null;
-        resolve(token === stateRefs.runToken);
+        resolve(advance === true && token === stateRefs.runToken);
       };
-      stateRefs.advanceResolve = finish;
-      stateRefs.advanceTimer = setTimeout(finish, ms);
     });
   }
 
   function advanceNow() {
-    if (stateRefs.advanceResolve) stateRefs.advanceResolve();
+    if (stateRefs.advanceResolve) stateRefs.advanceResolve(true);
   }
 
   function cancelAdvance() {
+    if (stateRefs.advanceResolve) stateRefs.advanceResolve(false);
     stateRefs.advanceToken += 1;
-    if (stateRefs.advanceTimer) clearTimeout(stateRefs.advanceTimer);
-    stateRefs.advanceTimer = null;
     stateRefs.advanceResolve = null;
   }
 
@@ -2801,7 +2797,8 @@
         setThinking(false);
         Fog.setSpeed(0.55);
         say(pick("hopeful"));
-        const proceed = await waitScene(TIMING.scene2AutoAdvance, token);
+        /* Wait here until NEXT is pressed - nothing moves on its own. */
+        const proceed = await waitForNext(token);
         if (!proceed) return;
       }
 
@@ -2846,9 +2843,9 @@
 
       setCardMilestone(reaction);
 
-      /* Everything has landed: reveal NEXT, then auto-advance after a beat. */
+      /* Everything has landed: reveal NEXT and wait for the player. */
       setReelsNext(true);
-      const show = await waitScene(TIMING.scene3AutoAdvance, token);
+      const show = await waitForNext(token);
       if (!show) return;
 
       showScene("prophecy");
@@ -3065,7 +3062,7 @@
      ============================================================ */
   els.consult.addEventListener("click", runPrediction);
 
-  /* Scene 2 NEXT: stop typing and jump straight to the reels. */
+  /* Scene 2 NEXT: cuts the reading short, or moves on once it ends. */
   els.nextBall.addEventListener("click", function () {
     if (stateRefs.scene !== "ball") return;
     stateRefs.skipAnalysis = true;
