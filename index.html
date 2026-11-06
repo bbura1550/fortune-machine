@@ -642,6 +642,272 @@
     .sky i, .candle .flame, .orb-glow, .orb-ring, .marquee, .jackpot-rays, .marquee .bulb { animation: none !important; }
     html { scroll-behavior: auto; }
   }
+
+  /* ============================================================
+     SCENES - one full-screen scene at a time, no page scrolling.
+     Scene 1 The Ask, Scene 2 The Crystal Ball,
+     Scene 3 The Reels of Fate, Scene 4 The Prophecy.
+     ============================================================ */
+  html, body { height: 100%; overflow: hidden; }
+  body { min-height: 0; }
+
+  .app {
+    height: 100svh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding: max(10px, env(safe-area-inset-top)) clamp(10px, 4vw, 30px) 0;
+  }
+  .booth-header { flex: 0 0 auto; }
+  .stage {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+  .scene {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 0 clamp(2px, 1.5vw, 10px);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(16px);
+    pointer-events: none;
+    transition: opacity .36s ease, transform .36s ease, visibility 0s linear .36s;
+  }
+  .scene.active {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    pointer-events: auto;
+    transition: opacity .4s ease, transform .4s ease;
+  }
+  .scene-inner {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 800px;
+    height: 100%;
+    min-height: 0;
+    margin: 0 auto;
+  }
+
+  /* ---------- scene 1: the ask ---------- */
+  .ask-inner {
+    justify-content: center;
+    gap: clamp(4px, 1.4svh, 12px);
+    padding-bottom: 4px;
+  }
+  .ask-inner .speech-row { margin: 0 auto; }
+  .ask-inner .controls { margin-top: 0; }
+  .ask-inner .ledger { margin: 0 auto; }
+  .ledger-slot { width: 100%; }
+  .ask-foot {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    padding: 0 2px max(1px, env(safe-area-inset-bottom));
+  }
+  .scene-reset {
+    margin: 0;
+    padding: 6px 8px;
+    font-size: clamp(.52rem, 1.8vw, .64rem);
+  }
+
+  /* ---------- scene 2: the crystal ball ---------- */
+  .scene-ball .crystal-stage {
+    --orb-size: clamp(150px, min(60vw, 37svh), 320px);
+    width: 100%;
+    padding-top: 0;
+  }
+  .ball-inner {
+    justify-content: center;
+    align-items: center;
+    gap: clamp(5px, 1.5svh, 12px);
+    padding-bottom: max(4px, env(safe-area-inset-bottom));
+  }
+  .orb-wrap {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    width: min(100%, calc(var(--orb-size) + clamp(56px, 16vw, 110px)));
+    margin: 0 auto;
+  }
+  .orb-wrap .orb-area { position: relative; z-index: 2; width: var(--orb-size); }
+  .orb-wrap .candle {
+    z-index: 1;
+    bottom: 8%;
+    width: clamp(10px, 3vw, 14px);
+    height: clamp(54px, 13svh, 86px);
+  }
+  .orb-wrap .candle.left { left: max(0px, 1vw); }
+  .orb-wrap .candle.right { right: max(0px, 1vw); }
+  .scene-ball .orb-stand { width: calc(var(--orb-size) * .52); }
+  .scene-ball .analysis-panel {
+    position: relative;
+    z-index: 4;
+    margin-top: clamp(6px, 1.8svh, 12px);
+  }
+  .scene-quote {
+    width: min(680px, 100%);
+    margin: 0 auto;
+    padding: 6px clamp(10px, 3vw, 14px) 7px;
+    border: 1.5px solid var(--gold);
+    border-radius: 12px;
+    background: linear-gradient(180deg, rgba(53,16,79,.94), rgba(13,4,23,.94));
+    box-shadow: 0 0 14px rgba(255,199,44,.12), inset 0 0 14px rgba(0,0,0,.5);
+  }
+  .scene-quote-name {
+    display: block;
+    color: var(--gold);
+    font-size: .5rem;
+    letter-spacing: .18em;
+    font-weight: 800;
+  }
+  .scene-quote p {
+    margin: 2px 0 0;
+    color: var(--green-glow);
+    font-size: clamp(.76rem, 2.45vw, .94rem);
+    line-height: 1.3;
+    text-shadow: 0 1px 3px #000;
+  }
+
+  /* ---------- scene 3: the reels ---------- */
+  .reels-inner {
+    justify-content: center;
+    gap: clamp(5px, 1.6svh, 12px);
+    padding-bottom: max(4px, env(safe-area-inset-bottom));
+  }
+  .reels-inner .machine {
+    width: min(560px, 100%);
+    margin: 0 auto;
+    --reel-h: clamp(104px, 27svh, 190px);
+  }
+
+  /* ---------- scene 4: the prophecy ---------- */
+  .prophecy-inner {
+    justify-content: center;
+    gap: clamp(4px, 1.4svh, 10px);
+    padding-bottom: max(4px, env(safe-area-inset-bottom));
+  }
+  .prophecy-inner .prophecy { width: 100%; margin: 0 auto; }
+  .prophecy-inner .ledger { width: 100%; max-width: 660px; margin: 0 auto; }
+  .prophecy-inner .card-milestone { margin-top: 9px; padding-top: 8px; }
+
+  /* ---------- the shared NEXT / ASK AGAIN button ---------- */
+  .scene-foot {
+    flex: 0 0 auto;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: auto;
+    padding: clamp(6px, 1.5svh, 12px) 0 max(4px, env(safe-area-inset-bottom));
+  }
+  .next-btn {
+    min-width: 176px;
+    min-height: 46px;
+    padding: 10px 26px;
+    border: 2px solid var(--gold);
+    border-radius: 999px;
+    background: radial-gradient(ellipse at 50% 0%, var(--green-500), var(--green-700) 55%, #03291a);
+    color: var(--gold-bright);
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: clamp(.82rem, 2.8vw, 1rem);
+    letter-spacing: .12em;
+    cursor: pointer;
+    box-shadow: 0 0 16px rgba(255,199,44,.18), inset 0 0 14px rgba(79,227,154,.12), 0 4px 0 #2a1c05;
+  }
+  .next-btn:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 1px 0 #2a1c05; }
+  .next-btn:disabled { opacity: .4; cursor: wait; filter: saturate(.6); }
+  .next-btn.is-waiting { visibility: hidden; }
+  .next-btn.ask-again { min-width: 214px; }
+
+  /* ---------- compact marquee on scenes 2-4 ---------- */
+  body[data-scene="ball"] .marquee,
+  body[data-scene="reels"] .marquee,
+  body[data-scene="prophecy"] .marquee {
+    padding: 7px 48px 7px 12px;
+    border-radius: 12px;
+    animation: none;
+    box-shadow: 0 0 0 2px rgba(255,199,44,.08), 0 0 16px rgba(255,199,44,.2), inset 0 0 22px rgba(0,0,0,.5);
+  }
+  body[data-scene="ball"] .marquee .crest,
+  body[data-scene="reels"] .marquee .crest,
+  body[data-scene="prophecy"] .marquee .crest,
+  body[data-scene="ball"] .marquee .subtitle,
+  body[data-scene="reels"] .marquee .subtitle,
+  body[data-scene="prophecy"] .marquee .subtitle,
+  body[data-scene="ball"] .marquee .crest-caption,
+  body[data-scene="reels"] .marquee .crest-caption,
+  body[data-scene="prophecy"] .marquee .crest-caption,
+  body[data-scene="ball"] .marquee .bulb-strip,
+  body[data-scene="reels"] .marquee .bulb-strip,
+  body[data-scene="prophecy"] .marquee .bulb-strip { display: none; }
+  body[data-scene="ball"] .marquee h1,
+  body[data-scene="reels"] .marquee h1,
+  body[data-scene="prophecy"] .marquee h1 {
+    margin: 0;
+    font-size: clamp(.8rem, 3.6vw, 1.08rem);
+    line-height: 1.1;
+    letter-spacing: .04em;
+  }
+  body[data-scene="ball"] .marquee h1 span,
+  body[data-scene="reels"] .marquee h1 span,
+  body[data-scene="prophecy"] .marquee h1 span { display: inline; }
+  body[data-scene="ball"] .sound-toggle,
+  body[data-scene="reels"] .sound-toggle,
+  body[data-scene="prophecy"] .sound-toggle { top: 6px; right: 6px; width: 34px; height: 34px; }
+  body[data-scene="ball"] .sound-toggle svg,
+  body[data-scene="reels"] .sound-toggle svg,
+  body[data-scene="prophecy"] .sound-toggle svg { width: 18px; height: 18px; }
+
+  /* ---------- medium-short screens: trim the marquee ---------- */
+  @media (max-height: 720px) and (min-height: 621px) {
+    .marquee { padding: 10px 14px 10px; }
+    .marquee .crest { width: 44px; margin-bottom: 2px; }
+    .marquee .crest-caption { display: none; }
+    .marquee .subtitle { margin-top: 6px; font-size: .78rem; }
+    .marquee h1 { font-size: clamp(1.4rem, 5vw, 2.1rem); }
+  }
+
+  /* ---------- short phone screens: tighten scene 1 ---------- */
+  @media (max-height: 620px) {
+    .app { padding-top: max(6px, env(safe-area-inset-top)); }
+    .marquee { padding: 8px 12px 9px; }
+    .marquee .crest,
+    .marquee .subtitle,
+    .marquee .crest-caption { display: none; }
+    .marquee h1 { margin-top: 0; font-size: clamp(1.18rem, 6vw, 1.55rem); }
+    .ask-inner { justify-content: center; gap: 6px; padding-bottom: 4px; }
+    .speech-row { margin-top: 4px; }
+    .speech-bubble { min-height: 0; padding: 7px 10px 8px; }
+    .speech-bubble p { font-size: .86rem; }
+    .controls { margin-top: 4px; }
+    .controls > label { margin-bottom: 4px; }
+    select { min-height: 44px; padding: 9px 38px 9px 11px; font-size: .94rem; }
+    .custom-opponent { min-height: 42px; margin-top: 5px; padding: 8px 11px; font-size: .94rem; }
+    .consult-btn { min-height: 48px; margin-top: 7px; padding: 9px 14px; }
+    .fine-print { display: none; }
+    .ledger { margin-top: 6px; }
+    .record-box, .hope-box { padding: 6px 9px 7px; }
+    .record-box strong { font-size: 1.35rem; }
+    .record-box .micro-note, .hope-box .micro-note { font-size: .46rem; }
+    .scene-ball .analysis-panel { padding: 6px 9px 7px; }
+    .analysis { min-height: 62px; font-size: .66rem; line-height: 1.4; }
+    .scene-quote { padding: 5px 9px 6px; }
+    .scene-quote p { font-size: .74rem; }
+    .next-btn { min-height: 42px; padding: 8px 22px; }
+    .prophecy { padding: 10px 12px; }
+    #headline { margin: 6px 0 7px; font-size: clamp(.98rem, 4.3vw, 1.3rem); }
+    .prophecy-meta { margin-bottom: 8px; }
+    .share-btn { min-height: 42px; padding: 8px 14px; }
+    .card-milestone { font-size: .74rem; }
+  }
 </style>
 </head>
 <body>
@@ -694,126 +960,167 @@
     </button>
   </header>
 
-  <section class="speech-row" aria-live="polite" aria-atomic="true">
-    <div class="madame" aria-hidden="true">
-      <svg viewBox="0 0 100 124" focusable="false">
-        <defs>
-          <linearGradient id="hoodPurple" x1="0" y1="0" x2="1" y2="1">
-            <stop stop-color="#47115f"/><stop offset=".6" stop-color="#240b38"/><stop offset="1" stop-color="#12061f"/>
-          </linearGradient>
-          <radialGradient id="faceGlow" cx=".5" cy=".4" r=".7">
-            <stop stop-color="#0b8f5a" stop-opacity=".5"/><stop offset="1" stop-color="#03170f" stop-opacity="0"/>
-          </radialGradient>
-        </defs>
-        <path d="M50 5 Q19 10 15 53 L10 121 Q50 128 90 121 L85 53 Q81 10 50 5 Z" fill="url(#hoodPurple)" stroke="#ffc72c" stroke-width="1.5"/>
-        <path d="M50 17 Q28 24 27 55 Q26 82 50 91 Q74 82 73 55 Q72 24 50 17 Z" fill="#0c0514" stroke="#b8860b" stroke-width="1"/>
-        <circle cx="50" cy="57" r="23" fill="url(#faceGlow)"/>
-        <path d="M40 51 Q45 47 49 51" fill="none" stroke="#4fe39a" stroke-width="2" stroke-linecap="round"/>
-        <path d="M51 51 Q55 47 60 51" fill="none" stroke="#4fe39a" stroke-width="2" stroke-linecap="round"/>
-        <circle cx="45" cy="53" r="1.6" fill="#ffe08a"/>
-        <circle cx="55" cy="53" r="1.6" fill="#ffe08a"/>
-        <path d="M50 56 L47 66 Q50 68 53 66 Z" fill="#4fe39a" opacity=".6"/>
-        <path d="M43 74 Q50 78 57 74" fill="none" stroke="#ffc72c" stroke-width="1.3" stroke-linecap="round"/>
-        <circle cx="30" cy="66" r="2.4" fill="#ffc72c"/>
-        <circle cx="70" cy="66" r="2.4" fill="#ffc72c"/>
-        <path d="M18 104 Q50 114 82 104" fill="none" stroke="#ffc72c" stroke-width="1" opacity=".55"/>
-        <circle cx="50" cy="112" r="3" fill="#ffc72c" opacity=".85"/>
-        <path d="M50 112 L50 120 M46 116 L54 116" stroke="#b8860b" stroke-width="1"/>
-      </svg>
-    </div>
-    <div class="speech-bubble" id="speechBubble">
-      <span class="speech-name">MADAME RAIDER</span>
-      <p id="madameSpeech">Welcome, Troy... I've been expecting you.</p>
-    </div>
-  </section>
-
-  <section class="ledger" aria-label="Your suffering so far">
-    <div class="record-box">
-      <span class="micro-label">ALL-TIME RECORD</span>
-      <strong id="recordText">0-0</strong>
-      <span class="micro-note" id="recordNote">0 predictions &middot; 0 wins</span>
-    </div>
-    <div class="hope-box" id="hopeBox">
-      <div class="hope-top">
-        <span class="micro-label">HOPE METER</span>
-        <span id="hopeLabel">FULL</span>
-      </div>
-      <div class="hope-track" id="hopeTrack" role="progressbar" aria-label="Troy's remaining hope" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100">
-        <div class="hope-fill" id="hopeFill"></div>
-      </div>
-      <span class="micro-note" id="hopeNote">Plenty left. For now.</span>
-    </div>
-  </section>
-
   <main class="stage" id="main">
-    <section class="crystal-stage" aria-label="Madame Raider's crystal ball">
-      <div class="candle left" aria-hidden="true"><span class="wick"></span><span class="wax"></span><span class="flame"></span></div>
-      <div class="candle right" aria-hidden="true"><span class="wick"></span><span class="wax"></span><span class="flame"></span></div>
-      <div class="orb-area" id="orbArea">
-        <div class="orb-glow" aria-hidden="true"></div>
-        <div class="orb" id="orb">
-          <canvas id="fogCanvas" aria-hidden="true"></canvas>
-          <div class="orb-shine" aria-hidden="true"></div>
+    <!-- SCENE 1: THE ASK -->
+    <section class="scene scene-ask active" id="sceneAsk" data-scene-name="ask" aria-label="The Ask">
+      <div class="scene-inner ask-inner">
+        <section class="speech-row" aria-live="polite" aria-atomic="true">
+          <div class="madame" aria-hidden="true">
+            <svg viewBox="0 0 100 124" focusable="false">
+              <defs>
+                <linearGradient id="hoodPurple" x1="0" y1="0" x2="1" y2="1">
+                  <stop stop-color="#47115f"/><stop offset=".6" stop-color="#240b38"/><stop offset="1" stop-color="#12061f"/>
+                </linearGradient>
+                <radialGradient id="faceGlow" cx=".5" cy=".4" r=".7">
+                  <stop stop-color="#0b8f5a" stop-opacity=".5"/><stop offset="1" stop-color="#03170f" stop-opacity="0"/>
+                </radialGradient>
+              </defs>
+              <path d="M50 5 Q19 10 15 53 L10 121 Q50 128 90 121 L85 53 Q81 10 50 5 Z" fill="url(#hoodPurple)" stroke="#ffc72c" stroke-width="1.5"/>
+              <path d="M50 17 Q28 24 27 55 Q26 82 50 91 Q74 82 73 55 Q72 24 50 17 Z" fill="#0c0514" stroke="#b8860b" stroke-width="1"/>
+              <circle cx="50" cy="57" r="23" fill="url(#faceGlow)"/>
+              <path d="M40 51 Q45 47 49 51" fill="none" stroke="#4fe39a" stroke-width="2" stroke-linecap="round"/>
+              <path d="M51 51 Q55 47 60 51" fill="none" stroke="#4fe39a" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="45" cy="53" r="1.6" fill="#ffe08a"/>
+              <circle cx="55" cy="53" r="1.6" fill="#ffe08a"/>
+              <path d="M50 56 L47 66 Q50 68 53 66 Z" fill="#4fe39a" opacity=".6"/>
+              <path d="M43 74 Q50 78 57 74" fill="none" stroke="#ffc72c" stroke-width="1.3" stroke-linecap="round"/>
+              <circle cx="30" cy="66" r="2.4" fill="#ffc72c"/>
+              <circle cx="70" cy="66" r="2.4" fill="#ffc72c"/>
+              <path d="M18 104 Q50 114 82 104" fill="none" stroke="#ffc72c" stroke-width="1" opacity=".55"/>
+              <circle cx="50" cy="112" r="3" fill="#ffc72c" opacity=".85"/>
+              <path d="M50 112 L50 120 M46 116 L54 116" stroke="#b8860b" stroke-width="1"/>
+            </svg>
+          </div>
+          <div class="speech-bubble" id="speechBubble">
+            <span class="speech-name">MADAME RAIDER</span>
+            <p id="madameSpeech">Welcome, Troy... I've been expecting you.</p>
+          </div>
+        </section>
+
+        <section class="controls" aria-label="Ask the machine">
+          <label for="opponent">WHO BREAKS TROY'S HEART NEXT?</label>
+          <div class="select-wrap">
+            <select id="opponent"></select>
+          </div>
+          <input class="custom-opponent" id="customOpponent" type="text" maxlength="80" placeholder="Type the opponent's name..." autocomplete="off" hidden>
+          <button class="consult-btn" id="consult" type="button"><span>CONSULT THE SPIRITS.</span></button>
+          <p class="fine-print">Every prediction is final. Especially the bad ones.</p>
+        </section>
+
+        <div class="ledger-slot" id="ledgerSlotAsk">
+          <section class="ledger" id="ledger" aria-label="Your suffering so far">
+            <div class="record-box">
+              <span class="micro-label">ALL-TIME RECORD</span>
+              <strong id="recordText">0-0</strong>
+              <span class="micro-note" id="recordNote">0 predictions &middot; 0 wins</span>
+            </div>
+            <div class="hope-box" id="hopeBox">
+              <div class="hope-top">
+                <span class="micro-label">HOPE METER</span>
+                <span id="hopeLabel">FULL</span>
+              </div>
+              <div class="hope-track" id="hopeTrack" role="progressbar" aria-label="Troy's remaining hope" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100">
+                <div class="hope-fill" id="hopeFill"></div>
+              </div>
+              <span class="micro-note" id="hopeNote">Plenty left. For now.</span>
+            </div>
+          </section>
         </div>
-        <div class="orb-ring" aria-hidden="true"></div>
-      </div>
-      <div class="orb-stand" aria-hidden="true"></div>
-      <div class="analysis-panel">
-        <div class="analysis-title">THE SPIRITS ARE LISTENING</div>
-        <div class="analysis idle" id="analysis" aria-live="off">Choose an opponent, then consult the spirits...</div>
+
+        <div class="ask-foot">
+          <button class="reset-link scene-reset" id="resetBtn" type="button">Reset my suffering</button>
+        </div>
       </div>
     </section>
 
-    <section class="machine" id="machine" aria-label="The Reels of Fate">
-      <div class="bulb-strip" id="machineBulbsTop" aria-hidden="true"></div>
-      <div class="machine-plate"><span>THE REELS OF FATE</span></div>
-      <div class="reels">
-        <div class="reel-col">
-          <div class="reel-label">RESULT</div>
-          <div class="reel-window"><div class="reel-strip" id="reelResult"></div></div>
+    <!-- SCENE 2: THE CRYSTAL BALL -->
+    <section class="scene scene-ball" id="sceneBall" data-scene-name="ball" aria-label="The Crystal Ball">
+      <div class="scene-inner ball-inner">
+        <section class="crystal-stage" aria-label="Madame Raider's crystal ball">
+          <div class="orb-wrap">
+            <div class="candle left" aria-hidden="true"><span class="wick"></span><span class="wax"></span><span class="flame"></span></div>
+            <div class="candle right" aria-hidden="true"><span class="wick"></span><span class="wax"></span><span class="flame"></span></div>
+            <div class="orb-area" id="orbArea">
+              <div class="orb-glow" aria-hidden="true"></div>
+              <div class="orb" id="orb">
+                <canvas id="fogCanvas" aria-hidden="true"></canvas>
+                <div class="orb-shine" aria-hidden="true"></div>
+              </div>
+              <div class="orb-ring" aria-hidden="true"></div>
+            </div>
+          </div>
+          <div class="orb-stand" aria-hidden="true"></div>
+          <div class="analysis-panel">
+            <div class="analysis-title">THE SPIRITS ARE LISTENING</div>
+            <div class="analysis idle" id="analysis" aria-live="off">Choose an opponent, then consult the spirits...</div>
+          </div>
+        </section>
+        <div class="scene-quote" aria-live="polite" aria-atomic="true">
+          <span class="scene-quote-name">MADAME RAIDER</span>
+          <p id="ballSpeech">The spirits are waiting...</p>
         </div>
-        <div class="reel-col">
-          <div class="reel-label">FINAL SCORE</div>
-          <div class="reel-window"><div class="reel-strip" id="reelScore"></div></div>
-        </div>
-        <div class="reel-col">
-          <div class="reel-label">HOW IT HAPPENED</div>
-          <div class="reel-window"><div class="reel-strip" id="reelReason"></div></div>
+        <div class="scene-foot">
+          <button class="next-btn" id="nextBall" type="button">NEXT <span aria-hidden="true">&#9656;</span></button>
         </div>
       </div>
-      <div class="bulb-strip" id="machineBulbsBottom" aria-hidden="true"></div>
-      <div class="payline-note">ALL SALES FINAL &middot; NO REFUNDS ON HOPE</div>
     </section>
 
-    <section class="controls" aria-label="Ask the machine">
-      <label for="opponent">WHO BREAKS TROY'S HEART NEXT?</label>
-      <div class="select-wrap">
-        <select id="opponent"></select>
+    <!-- SCENE 3: THE REELS OF FATE -->
+    <section class="scene scene-reels" id="sceneReels" data-scene-name="reels" aria-label="The Reels of Fate">
+      <div class="scene-inner reels-inner">
+        <section class="machine" id="machine" aria-label="The Reels of Fate">
+          <div class="bulb-strip" id="machineBulbsTop" aria-hidden="true"></div>
+          <div class="machine-plate"><span>THE REELS OF FATE</span></div>
+          <div class="reels">
+            <div class="reel-col">
+              <div class="reel-label">RESULT</div>
+              <div class="reel-window"><div class="reel-strip" id="reelResult"></div></div>
+            </div>
+            <div class="reel-col">
+              <div class="reel-label">FINAL SCORE</div>
+              <div class="reel-window"><div class="reel-strip" id="reelScore"></div></div>
+            </div>
+            <div class="reel-col">
+              <div class="reel-label">HOW IT HAPPENED</div>
+              <div class="reel-window"><div class="reel-strip" id="reelReason"></div></div>
+            </div>
+          </div>
+          <div class="bulb-strip" id="machineBulbsBottom" aria-hidden="true"></div>
+          <div class="payline-note">ALL SALES FINAL &middot; NO REFUNDS ON HOPE</div>
+        </section>
+        <div class="scene-quote" aria-live="polite" aria-atomic="true">
+          <span class="scene-quote-name">MADAME RAIDER</span>
+          <p id="reelSpeech">The reels are waiting...</p>
+        </div>
+        <div class="scene-foot">
+          <button class="next-btn is-waiting" id="nextReels" type="button" disabled>NEXT <span aria-hidden="true">&#9656;</span></button>
+        </div>
       </div>
-      <input class="custom-opponent" id="customOpponent" type="text" maxlength="80" placeholder="Type the opponent's name..." autocomplete="off" hidden>
-      <button class="consult-btn" id="consult" type="button"><span>CONSULT THE SPIRITS.</span></button>
-      <p class="fine-print">Every prediction is final. Especially the bad ones.</p>
     </section>
 
-    <section class="prophecy" id="prophecy" hidden aria-live="polite" aria-atomic="true">
-      <div class="prophecy-kicker">THE PROPHECY</div>
-      <h2 id="headline"></h2>
-      <div class="prophecy-meta">
-        <span id="resultChip"></span>
-        <span id="scoreChip"></span>
+    <!-- SCENE 4: THE PROPHECY -->
+    <section class="scene scene-prophecy" id="sceneProphecy" data-scene-name="prophecy" aria-label="The Prophecy">
+      <div class="scene-inner prophecy-inner">
+        <section class="prophecy" id="prophecy" hidden aria-live="polite" aria-atomic="true">
+          <div class="prophecy-kicker">THE PROPHECY</div>
+          <h2 id="headline"></h2>
+          <div class="prophecy-meta">
+            <span id="resultChip"></span>
+            <span id="scoreChip"></span>
+          </div>
+          <div class="action-row">
+            <button class="share-btn" id="shareBtn" type="button">SHARE PROPHECY</button>
+            <span class="status-text" id="shareStatus" aria-live="polite"></span>
+          </div>
+          <p class="card-milestone" id="cardMilestone" hidden></p>
+        </section>
+        <div class="ledger-slot" id="ledgerSlotProphecy"></div>
+        <div class="scene-foot">
+          <button class="next-btn ask-again" id="askAgain" type="button">ASK AGAIN</button>
+        </div>
       </div>
-      <div class="action-row">
-        <button class="share-btn" id="shareBtn" type="button">SHARE PROPHECY</button>
-        <span class="status-text" id="shareStatus" aria-live="polite"></span>
-      </div>
-      <p class="card-milestone" id="cardMilestone" hidden></p>
     </section>
   </main>
-
-  <footer class="footer">
-    <p>Madame Raider is not responsible for broken hearts, brackets, or furniture.</p>
-    <button class="reset-link" id="resetBtn" type="button">Reset my suffering</button>
-  </footer>
 </div>
 
 <div class="madame-toast" id="madameToast" aria-hidden="true">
@@ -895,6 +1202,42 @@
    ============================================================ */
 (function () {
   "use strict";
+
+  /* ============================================================
+     TIMING SETTINGS - change the cadence here.
+     All values are milliseconds. This is the one place to adjust
+     how fast the reading types, how long each scene waits, and
+     how slowly the reels stop.
+     ============================================================ */
+  const TIMING = {
+    /* SCENE 2 - THE CRYSTAL BALL */
+    analysisTotal: 4000,       // total time the analysis lines take to type out
+    analysisLinePause: 95,     // small pause after each line finishes typing
+    analysisCharMin: 8,        // fastest per-character typing speed
+    scene2AutoAdvance: 1500,   // pause after the hopeful line, then move to the reels
+
+    /* SCENE 3 - THE REELS */
+    beforeReels: 900,          // short beat after Scene 3 appears before spinning
+    spinResult: 1900,          // normal spin: result reel stop time
+    spinScore: 2600,           // normal spin: score reel stop time
+    spinReason: 3300,          // normal spin: reason reel stop time
+    nearResultSpin: 1500,      // near-miss: result reel stops on WIN!!!
+    nearScoreSpin: 2200,       // near-miss: score reel stop time
+    nearReasonSpin: 2900,      // near-miss: reason reel stop time
+    nearWinHold: 1500,         // how long the fake WIN!!! celebration holds
+    nearDrop: 550,             // how long the WIN!!! reel takes to slide to the loss
+    champResultSpin: 1600,     // championship dream: result reel stop time
+    champScoreSpin: 2400,      // championship dream: score reel stop time
+    champReasonSpin: 3200,     // championship dream: reason reel stop time
+    champDreamHold: 3000,      // how long the championship dream overlay stays up
+    champWakePause: 2300,      // how long the blackout "wake up" line stays up
+    champResetPause: 650,      // pause after the dream reels reset
+    reelTick: 92,              // spacing of the reel ticking sound
+    scene3AutoAdvance: 3000,   // pause after everything lands, then show the prophecy
+
+    /* STARTUP BEAT */
+    startDelay: 420             // beat before the spirits begin typing
+  };
 
   /* ============================================================
      JOKE LISTS
@@ -1289,6 +1632,8 @@
     orbArea: $("#orbArea"),
     fogCanvas: $("#fogCanvas"),
     analysis: $("#analysis"),
+    ballSpeech: $("#ballSpeech"),
+    reelSpeech: $("#reelSpeech"),
     machine: $("#machine"),
     reelResult: $("#reelResult"),
     reelScore: $("#reelScore"),
@@ -1304,6 +1649,16 @@
     shareStatus: $("#shareStatus"),
     cardMilestone: $("#cardMilestone"),
     resetBtn: $("#resetBtn"),
+    ledger: $("#ledger"),
+    ledgerSlotAsk: $("#ledgerSlotAsk"),
+    ledgerSlotProphecy: $("#ledgerSlotProphecy"),
+    sceneAsk: $("#sceneAsk"),
+    sceneBall: $("#sceneBall"),
+    sceneReels: $("#sceneReels"),
+    sceneProphecy: $("#sceneProphecy"),
+    nextBall: $("#nextBall"),
+    nextReels: $("#nextReels"),
+    askAgain: $("#askAgain"),
     toast: $("#madameToast"),
     toastText: $("#toastText"),
     jackpotOverlay: $("#jackpotOverlay"),
@@ -1335,7 +1690,12 @@
     currentJokeKind: "analysis",
     shareHeadline: "",
     toastTimer: null,
-    speechTimer: null
+    speechTimer: null,
+    scene: "ask",
+    skipAnalysis: false,
+    advanceTimer: null,
+    advanceResolve: null,
+    advanceToken: 0
   };
 
   function fillBulbs(container, count) {
@@ -1394,6 +1754,65 @@
     els.consult.querySelector("span").textContent = value ? "THE SPIRITS ARE THINKING..." : "CONSULT THE SPIRITS.";
   }
 
+  /* ---------- moving between the four full-screen scenes ---------- */
+  const sceneEls = {
+    ask: els.sceneAsk,
+    ball: els.sceneBall,
+    reels: els.sceneReels,
+    prophecy: els.sceneProphecy
+  };
+
+  function showScene(name) {
+    stateRefs.scene = name;
+    document.body.dataset.scene = name;
+    Object.keys(sceneEls).forEach(function (key) {
+      const scene = sceneEls[key];
+      if (!scene) return;
+      const active = key === name;
+      scene.classList.toggle("active", active);
+      scene.setAttribute("aria-hidden", String(!active));
+    });
+    if (name === "ask" || name === "prophecy") moveLedger(name);
+  }
+
+  function moveLedger(name) {
+    const target = name === "prophecy" ? els.ledgerSlotProphecy : els.ledgerSlotAsk;
+    if (target && els.ledger.parentElement !== target) target.appendChild(els.ledger);
+  }
+
+  /* Scene 3 hides NEXT until every reel and overlay has finished. */
+  function setReelsNext(ready) {
+    els.nextReels.disabled = !ready;
+    els.nextReels.classList.toggle("is-waiting", !ready);
+  }
+
+  /* Used for both auto-advance timers and manual NEXT presses. */
+  function waitScene(ms, token) {
+    return new Promise(function (resolve) {
+      const myToken = ++stateRefs.advanceToken;
+      const finish = function () {
+        if (myToken !== stateRefs.advanceToken) return;
+        if (stateRefs.advanceTimer) clearTimeout(stateRefs.advanceTimer);
+        stateRefs.advanceTimer = null;
+        stateRefs.advanceResolve = null;
+        resolve(token === stateRefs.runToken);
+      };
+      stateRefs.advanceResolve = finish;
+      stateRefs.advanceTimer = setTimeout(finish, ms);
+    });
+  }
+
+  function advanceNow() {
+    if (stateRefs.advanceResolve) stateRefs.advanceResolve();
+  }
+
+  function cancelAdvance() {
+    stateRefs.advanceToken += 1;
+    if (stateRefs.advanceTimer) clearTimeout(stateRefs.advanceTimer);
+    stateRefs.advanceTimer = null;
+    stateRefs.advanceResolve = null;
+  }
+
   function showToast(text) {
     els.toastText.textContent = text;
     els.toast.classList.add("show");
@@ -1406,20 +1825,14 @@
   function say(text, options) {
     const opts = options || {};
     els.madameSpeech.textContent = text;
+    if (els.ballSpeech) els.ballSpeech.textContent = text;
+    if (els.reelSpeech) els.reelSpeech.textContent = text;
     els.speechBubble.classList.remove("pop");
     void els.speechBubble.offsetWidth;
     els.speechBubble.classList.add("pop");
-    if (opts.toast !== false) showToast(text);
-  }
-
-  function scrollToOnPhone(target) {
-    if (!target) return;
-    if (!window.matchMedia("(max-width: 760px)").matches) return;
-    try {
-      target.scrollIntoView({ behavior: "smooth", block: "center" });
-    } catch (error) {
-      target.scrollIntoView();
-    }
+    /* The toast would cover the bottom NEXT button on scenes 2 and 3,
+       so it only appears on the opening scene. */
+    if (opts.toast !== false && stateRefs.scene === "ask") showToast(text);
   }
 
   function setThinking(value) {
@@ -2128,7 +2541,7 @@
 
   function startTickLoop(duration) {
     if (state.muted) return function () {};
-    const timer = setInterval(function () { AudioEngine.tick(); }, 92);
+    const timer = setInterval(function () { AudioEngine.tick(); }, TIMING.reelTick);
     const stopTimer = setTimeout(function () { clearInterval(timer); }, duration);
     return function () {
       clearInterval(timer);
@@ -2141,11 +2554,11 @@
     const r2 = buildReel(els.reelScore, reelValues("score", score, false));
     const r3 = buildReel(els.reelReason, reelValues("reasons", reason, false));
     els.machine.classList.add("spinning");
-    const stopTicks = startTickLoop(3300);
+    const stopTicks = startTickLoop(TIMING.spinReason);
     await Promise.all([
-      animateReel(r1, r1.count - 1, 1900),
-      animateReel(r2, r2.count - 1, 2600),
-      animateReel(r3, r3.count - 1, 3300)
+      animateReel(r1, r1.count - 1, TIMING.spinResult),
+      animateReel(r2, r2.count - 1, TIMING.spinScore),
+      animateReel(r3, r3.count - 1, TIMING.spinReason)
     ]);
     stopTicks();
     els.machine.classList.remove("spinning");
@@ -2158,21 +2571,21 @@
     const winIndex = r1.count - 2;
     const lossIndex = r1.count - 1;
     els.machine.classList.add("spinning");
-    const stopTicks = startTickLoop(3000);
-    const p1 = animateReel(r1, winIndex, 1500);
-    const p2 = animateReel(r2, r2.count - 1, 2200);
-    const p3 = animateReel(r3, r3.count - 1, 2900);
+    const stopTicks = startTickLoop(TIMING.nearReasonSpin);
+    const p1 = animateReel(r1, winIndex, TIMING.nearResultSpin);
+    const p2 = animateReel(r2, r2.count - 1, TIMING.nearScoreSpin);
+    const p3 = animateReel(r3, r3.count - 1, TIMING.nearReasonSpin);
 
     await p1;
     els.machine.classList.add("jackpot");
     say("TROY... IT'S HAPPENING!");
     AudioEngine.jackpot();
-    await sleep(1500);
+    await sleep(TIMING.nearWinHold);
 
     AudioEngine.stopMusic();
     AudioEngine.recordScratch();
     els.machine.classList.remove("jackpot");
-    await nudgeReel(r1, winIndex, lossIndex, 550);
+    await nudgeReel(r1, winIndex, lossIndex, TIMING.nearDrop);
     say("...oh. No. Sorry Troy, I misread it.");
     AudioEngine.sadTrombone();
     await Promise.all([p2, p3]);
@@ -2185,11 +2598,11 @@
     const r2 = buildReel(els.reelScore, reelValues("score", "99-0", false));
     const r3 = buildReel(els.reelReason, reelValues("reasons", "TROY FAINTS WITH JOY", false));
     els.machine.classList.add("spinning");
-    const stopTicks = startTickLoop(3200);
+    const stopTicks = startTickLoop(TIMING.champReasonSpin);
     await Promise.all([
-      animateReel(r1, r1.count - 1, 1600),
-      animateReel(r2, r2.count - 1, 2400),
-      animateReel(r3, r3.count - 1, 3200)
+      animateReel(r1, r1.count - 1, TIMING.champResultSpin),
+      animateReel(r2, r2.count - 1, TIMING.champScoreSpin),
+      animateReel(r3, r3.count - 1, TIMING.champReasonSpin)
     ]);
     stopTicks();
     els.machine.classList.remove("spinning");
@@ -2200,19 +2613,19 @@
       "THE SPIRITS HAVE NEVER BEEN MORE SURE."
     );
     AudioEngine.fanfare();
-    await sleep(3000);
+    await sleep(TIMING.champDreamHold);
 
     hideJackpotOverlay();
     AudioEngine.stopMusic();
     els.machine.classList.remove("jackpot");
     showBlackout("...sorry Troy, that was a dream. Wake up.");
     say("...sorry Troy, that was a dream. Wake up.");
-    await sleep(2300);
+    await sleep(TIMING.champWakePause);
     hideBlackout();
     FX.stop();
     /* The dream is over, so put the machine back to its resting state. */
     resetReels();
-    await sleep(650);
+    await sleep(TIMING.champResetPause);
   }
 
   /* ============================================================
@@ -2284,16 +2697,21 @@
   }
 
   async function typeAnalysis(token) {
+    if (stateRefs.skipAnalysis) return true;
     const lines = shuffled(getPool("analysis")).slice(0, 5);
     const totalCharacters = lines.reduce(function (sum, line) { return sum + line.length; }, 0);
     const start = performance.now();
-    const linePause = 95;
-    const perCharacter = Math.max(8, (4000 - lines.length * linePause) / Math.max(1, totalCharacters));
+    const linePause = TIMING.analysisLinePause;
+    const perCharacter = Math.max(
+      TIMING.analysisCharMin,
+      (TIMING.analysisTotal - lines.length * linePause) / Math.max(1, totalCharacters)
+    );
     els.analysis.classList.remove("idle");
     els.analysis.innerHTML = "";
 
     for (let i = 0; i < lines.length; i += 1) {
       if (token !== stateRefs.runToken) return false;
+      if (stateRefs.skipAnalysis) return true;
       const row = document.createElement("div");
       const textNode = document.createTextNode("");
       const cursor = document.createElement("span");
@@ -2303,6 +2721,7 @@
       els.analysis.appendChild(row);
       for (let c = 1; c <= lines[i].length; c += 1) {
         if (token !== stateRefs.runToken) return false;
+        if (stateRefs.skipAnalysis) return true;
         textNode.nodeValue = lines[i].slice(0, c);
         await sleep(perCharacter);
       }
@@ -2311,7 +2730,7 @@
     }
 
     const elapsed = performance.now() - start;
-    if (elapsed < 4000) await sleep(4000 - elapsed);
+    if (elapsed < TIMING.analysisTotal) await sleep(TIMING.analysisTotal - elapsed);
     return token === stateRefs.runToken;
   }
 
@@ -2325,15 +2744,6 @@
     state.hope = hopePercent();
     saveState();
     renderState();
-  }
-
-  function scheduleMilestone(text, delay, token) {
-    if (!text) return;
-    setTimeout(function () {
-      if (token !== stateRefs.runToken) return;
-      say(text);
-      setCardMilestone(text);
-    }, delay);
   }
 
   async function runPrediction() {
@@ -2355,39 +2765,62 @@
     const predictionNumber = state.losses + 1;
     const outcome = decideOutcome(predictionNumber);
     stateRefs.forcedOutcome = null;
+    stateRefs.skipAnalysis = false;
+    cancelAdvance();
     updateTestReadout();
 
     setBusy(true);
+    setReelsNext(false);
     setCardMilestone("");
     els.prophecy.hidden = true;
     els.shareStatus.textContent = "";
     els.machine.classList.remove("jackpot", "spinning");
     els.analysis.classList.remove("idle");
     els.analysis.innerHTML = "";
+    els.headline.textContent = "";
     AudioEngine.ensure();
     AudioEngine.chime();
     setThinking(true);
     Fog.setSpeed(3.2);
     say("The spirits are listening...");
-    scrollToOnPhone(els.orbArea);
+    showScene("ball");
 
     try {
-      await sleep(420);
-      AudioEngine.startHum();
-      const finished = await typeAnalysis(token);
-      AudioEngine.stopHum();
-      if (!finished || token !== stateRefs.runToken) return;
+      /* Scene 2: type the analysis unless NEXT skipped it. */
+      if (!stateRefs.skipAnalysis) {
+        await sleep(TIMING.startDelay);
+        if (!stateRefs.skipAnalysis && token === stateRefs.runToken) {
+          AudioEngine.startHum();
+          const finished = await typeAnalysis(token);
+          AudioEngine.stopHum();
+          if (!finished || token !== stateRefs.runToken) return;
+        }
+      }
 
+      if (!stateRefs.skipAnalysis) {
+        setThinking(false);
+        Fog.setSpeed(0.55);
+        say(pick("hopeful"));
+        const proceed = await waitScene(TIMING.scene2AutoAdvance, token);
+        if (!proceed) return;
+      }
+
+      AudioEngine.stopHum();
       setThinking(false);
       Fog.setSpeed(0.55);
-      say(pick("hopeful"));
-      await sleep(1200);
+      stateRefs.skipAnalysis = false;
+
+      /* Scene 3: everything spins and lands here. NEXT stays hidden. */
+      showScene("reels");
+      setReelsNext(false);
+      say("The reels of fate are turning...", { toast: false });
+      await sleep(TIMING.beforeReels);
       if (token !== stateRefs.runToken) return;
 
-      scrollToOnPhone(els.machine);
       const result = pick("results");
       const score = pickScore();
       const reason = pick("reasons");
+      let reaction = "";
 
       if (outcome === "champ") {
         await spinChampionship();
@@ -2395,34 +2828,31 @@
         commitPrediction("champ");
         const dreamHeadline = "WRIGHT STATE WINS THE NATIONAL CHAMPIONSHIP IN TROY'S DREAM, THEN WAKES UP 0-" + state.losses + ".";
         showProphecy(dreamHeadline, "DREAM OVER", "ALL-TIME 0-" + state.losses);
-        scheduleMilestone(HELP_LINE, 2200, token);
+        reaction = HELP_LINE;
       } else if (outcome === "near") {
         await spinNearMiss(result, score, reason);
         if (token !== stateRefs.runToken) return;
         commitPrediction("near");
         showProphecy(headlineFor(opponent, score, reason), result, score);
-        scheduleMilestone(milestoneFor(state.losses), 2300, token);
+        reaction = milestoneFor(state.losses) || randomItem(LOSS_REACTIONS);
       } else {
         await spinNormal(result, score, reason);
         if (token !== stateRefs.runToken) return;
         commitPrediction("normal");
         AudioEngine.sadTrombone();
         showProphecy(headlineFor(opponent, score, reason), result, score);
-        const milestone = milestoneFor(state.losses);
-        if (milestone) {
-          scheduleMilestone(milestone, 650, token);
-        } else {
-          await sleep(420);
-          say(randomItem(LOSS_REACTIONS));
-        }
+        reaction = milestoneFor(state.losses) || randomItem(LOSS_REACTIONS);
       }
 
-      await sleep(150);
-      if (token === stateRefs.runToken && window.matchMedia("(max-width: 760px)").matches) {
-        requestAnimationFrame(function () {
-          els.prophecy.scrollIntoView({ behavior: "smooth", block: "nearest" });
-        });
-      }
+      setCardMilestone(reaction);
+
+      /* Everything has landed: reveal NEXT, then auto-advance after a beat. */
+      setReelsNext(true);
+      const show = await waitScene(TIMING.scene3AutoAdvance, token);
+      if (!show) return;
+
+      showScene("prophecy");
+      setReelsNext(false);
     } catch (error) {
       if (token === stateRefs.runToken) {
         say("The spirits dropped the crystal ball. Try once more, Troy.");
@@ -2549,6 +2979,8 @@
   function resetProgress() {
     stateRefs.runToken += 1;
     stateRefs.forcedOutcome = null;
+    stateRefs.skipAnalysis = false;
+    cancelAdvance();
     state.losses = 0;
     state.hope = MAX_HOPE;
     state.lastNearMiss = false;
@@ -2561,6 +2993,7 @@
     setIdleAnalysis();
     setThinking(false);
     setBusy(false);
+    setReelsNext(false);
     Fog.setSpeed(0.55);
     AudioEngine.stopHum();
     AudioEngine.stopMusic();
@@ -2571,8 +3004,31 @@
     FX.stop();
     els.machine.classList.remove("jackpot", "spinning");
     els.toast.classList.remove("show");
+    showScene("ask");
     say("Welcome, Troy... I've been expecting you.", { toast: false });
     updateTestReadout();
+  }
+
+  /* Scene 4's ASK AGAIN button. The opponent choice is deliberately kept. */
+  function returnToAsk() {
+    stateRefs.runToken += 1;
+    stateRefs.skipAnalysis = false;
+    cancelAdvance();
+    setBusy(false);
+    setThinking(false);
+    setReelsNext(false);
+    Fog.setSpeed(0.55);
+    AudioEngine.stopHum();
+    AudioEngine.stopMusic();
+    els.machine.classList.remove("jackpot", "spinning");
+    els.prophecy.hidden = true;
+    clearProphecy();
+    hideJackpotOverlay();
+    hideBlackout();
+    FX.stop();
+    resetReels();
+    setIdleAnalysis();
+    showScene("ask");
   }
 
   function clearProphecy() {
@@ -2608,6 +3064,22 @@
      EVENTS
      ============================================================ */
   els.consult.addEventListener("click", runPrediction);
+
+  /* Scene 2 NEXT: stop typing and jump straight to the reels. */
+  els.nextBall.addEventListener("click", function () {
+    if (stateRefs.scene !== "ball") return;
+    stateRefs.skipAnalysis = true;
+    advanceNow();
+  });
+
+  /* Scene 3 NEXT: only works after every reel and overlay has finished. */
+  els.nextReels.addEventListener("click", function () {
+    if (stateRefs.scene !== "reels" || els.nextReels.disabled) return;
+    advanceNow();
+  });
+
+  els.askAgain.addEventListener("click", returnToAsk);
+
   els.opponent.addEventListener("change", syncCustomInput);
   els.customOpponent.addEventListener("keydown", function (event) {
     if (event.key === "Enter") runPrediction();
@@ -2710,9 +3182,11 @@
     rebuildOpponentSelect();
     resetReels();
     setIdleAnalysis();
+    setReelsNext(false);
     renderState();
     updateSoundButton();
     renderJokeManager();
+    showScene("ask");
     Fog.start();
 
     if (state.losses === 0) {
